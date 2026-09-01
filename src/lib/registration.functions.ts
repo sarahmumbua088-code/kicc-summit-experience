@@ -13,21 +13,7 @@ const createRegistrationSchema = z.object({
 export const createRegistration = createServerFn({ method: "POST" })
   .inputValidator((data) => createRegistrationSchema.parse(data))
   .handler(async ({ data }) => {
-    const { createClient } = await import("@supabase/supabase-js");
-
-    const supabaseUrl = process.env["VITE_SUPABASE_URL"];
-    const serviceRoleKey = process.env["SUPABASE_SERVICE_ROLE_KEY"];
-
-    if (!supabaseUrl || !serviceRoleKey) {
-      throw new Error("Server configuration error");
-    }
-
-    const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-      },
-    });
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     const { data: registration, error } = await supabaseAdmin
       .from("registrations")
